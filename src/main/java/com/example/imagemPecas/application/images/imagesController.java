@@ -2,7 +2,7 @@ package com.example.imagemPecas.application.images;
 
 import com.example.imagemPecas.domain.entity.Image;
 import com.example.imagemPecas.domain.enums.ImageExtension;
-import com.example.imagemPecas.domain.service.imageService;
+import com.example.imagemPecas.domain.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class imagesController {
 
-    private final imageService service;
-    private final imageMapper mapper;
+    private final ImageService service;
+    private final ImageMapper mapper;
 
     @PostMapping
     public ResponseEntity save(
@@ -60,13 +60,13 @@ public class imagesController {
     }
 
     @GetMapping
-    public ResponseEntity<List<imageDTO>> search(
+    public ResponseEntity<List<ImageDTO>> search(
             @RequestParam(value = "extension", required = false, defaultValue = "") String extension,
             @RequestParam(value = "query", required = false) String query) {
         var result = service.search(ImageExtension.ofName(extension), query);
         var images = result.stream().map(image -> {
             var url = buildImageURL(image);
-            return mapper.imageDTO(image, url.toString());
+            return mapper.imageToDTO(image, url.toString());
         }).collect(Collectors.toList());
         return ResponseEntity.ok(images);
     }
