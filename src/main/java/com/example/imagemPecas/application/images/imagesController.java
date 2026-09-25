@@ -2,12 +2,11 @@ package com.example.imagemPecas.application.images;
 
 import com.example.imagemPecas.domain.entity.Image;
 import com.example.imagemPecas.domain.enums.ImageExtension;
-import com.example.imagemPecas.domain.service.ImageService;
+import com.example.imagemPecas.domain.service.imageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,8 +23,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class imagesController {
 
-    private final ImageService service;
-    private final ImageMapper mapper;
+    private final imageService service;
+    private final imageMapper mapper;
 
     @PostMapping
     public ResponseEntity save(
@@ -35,15 +34,14 @@ public class imagesController {
     ) throws IOException
     {
         log.info("Imagem recebida: name: {}, size: {}", file.getOriginalFilename(), file.getSize());
-;
         Image image = mapper.mapToImage(file, name, tags);
-        Image savedImage =  service.save(image);
+        Image savedImage = service.save(image);
 
         URI imageUri = buildImageURL(savedImage);
         return ResponseEntity.created(imageUri).build();
     }
 
-    // v1/images/{id}
+    //v1/images/{id}
     @GetMapping("{id}")
     public ResponseEntity<byte[]> getImage(@PathVariable("id") String id){
         var possibleImage = service.getById(id);
@@ -51,40 +49,33 @@ public class imagesController {
             return ResponseEntity.notFound().build();
         }
         var image = possibleImage.get();
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(image.getExtension().getMediaType());
         headers.setContentLength(image.getSize());
         //headers.setContentDispositionFormData("", image.getFileName());
-        headers.setContentDispositionFormData("inline; filename= \""
-                + image.getName()
-                + "\"", image.getFileName());
-
+        headers.setContentDispositionFormData("inline; filenamme=\"" + image.getName() + "\"", image.getFileName());
         return new ResponseEntity<>(image.getFile(), headers, HttpStatus.OK);
+
     }
 
-
-    //localhost:8080/v1/images/xxxxxxxxxxxxxxxxx
-    private URI buildImageURL(Image image){
-        String imagePath = "/" + image.getId();
-        return ServletUriComponentsBuilder
-                .fromCurrentRequestUri()
-                .path(imagePath)
-                .build()
-                .toUri();
-    }
-
-    //localhost:8080/v1/images?extension=PNG&query=Nature
     @GetMapping
-    public ResponseEntity<List<ImageDTO>> search(
+    public ResponseEntity<List<imageDTO>> search(
             @RequestParam(value = "extension", required = false, defaultValue = "") String extension,
-            @RequestParam(value = "query", required = false) String query){
-
+            @RequestParam(value = "query", required = false) String query) {
         var result = service.search(ImageExtension.ofName(extension), query);
         var images = result.stream().map(image -> {
             var url = buildImageURL(image);
-            return mapper.imageToDTO(image, url.toString());
+            return mapper.imageDTO(image, url.toString());
         }).collect(Collectors.toList());
         return ResponseEntity.ok(images);
+    }
+
+
+    //localhost:8080/v1/images/xxxxxxxxxxxxxxx
+    private URI buildImageURL(Image image){
+        String imagePath = "/" + image.getId();
+        return ServletUriComponentsBuilder.fromCurrentRequestUri().path(imagePath).build().toUri();
     }
 
 }
