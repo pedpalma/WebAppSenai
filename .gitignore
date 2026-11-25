@@ -1,1 +1,4 @@
 .idea/
+
+# volume do PostgreSQL (docker-compose da raiz)
+data/

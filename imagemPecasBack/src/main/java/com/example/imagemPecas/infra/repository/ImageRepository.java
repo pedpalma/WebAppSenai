@@ -3,6 +3,7 @@ package com.example.imagemPecas.infra.repository;
 import com.example.imagemPecas.domain.entity.Image;
 import com.example.imagemPecas.domain.enums.ImageExtension;
 import com.example.imagemPecas.infra.repository.specs.GenericSpecs;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -24,7 +25,7 @@ public interface ImageRepository extends JpaRepository<Image, String>, JpaSpecif
         if(StringUtils.hasText(query)){
             spec = spec.and( anyOf(nameLike(query), tagsLike(query)));
         }
-        return findAll(spec);
+        return findAll(spec, Sort.by(Sort.Direction.DESC, "uploadDate"));
     }
 }
 

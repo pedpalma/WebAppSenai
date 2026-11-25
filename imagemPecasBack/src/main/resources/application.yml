@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/imagelite
-    username: postgres
-    password: postgres
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/imagelite}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
 
   jpa:
     database: POSTGRESQL
@@ -12,13 +12,16 @@ spring:
 
   servlet:
     multipart:
+      # o limite de negócio é 4 MB (RN03), validado no ImageServiceImpl;
+      # aqui deixamos uma folga para conseguir devolver uma mensagem amigável
       max-file-size: 20MB
       max-request-size: 20MB
 
+# Chave de assinatura do JWT (mín. 32 caracteres). Se vazia, uma chave aleatória é gerada a cada inicialização.
+jwt:
+  secret: ${JWT_SECRET:}
 
-
-
-
-
-
-
+app:
+  cors:
+    # origens liberadas para o front-end (separadas por vírgula)
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:*}

@@ -1,0 +1,58 @@
+# Sobe a aplicação completa: front-end (app), back-end (sbootapp), banco (db) e pgAdmin.
+#   docker compose up -d --build
+# Front-end: http://localhost:3000 | API: http://localhost:8080 | pgAdmin: http://localhost:15432
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: imagelite
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d imagelite"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+    ports:
+      - '15432:80'
+    depends_on:
+      - db
+
+  sbootapp:
+    build: ./imagemPecasBack
+    restart: on-failure
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/imagelite
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      # troque por um valor secreto (mín. 32 caracteres) em produção
+      JWT_SECRET: ${JWT_SECRET:-imagempecas-chave-secreta-de-desenvolvimento-2026}
+      CORS_ALLOWED_ORIGINS: http://localhost:3000
+    ports:
+      - '8080:8080'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app:
+    build:
+      context: ./imagemPecasFront
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8080
+    restart: on-failure
+    ports:
+      - '3000:3000'
+    depends_on:
+      - sbootapp

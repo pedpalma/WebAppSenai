@@ -37,9 +37,8 @@ public class Image {
     @Lob
     private byte[] file;
 
+    // ex.: "placa mãe.jpeg"
     public String getFileName(){
-        return getName().concat("").concat(getExtension().name());
+        return getName().concat(".").concat(getExtension().name().toLowerCase());
     }
 }
-
-

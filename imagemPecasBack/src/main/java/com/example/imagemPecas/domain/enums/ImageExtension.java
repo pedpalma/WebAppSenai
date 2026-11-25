@@ -1,6 +1,5 @@
 package com.example.imagemPecas.domain.enums;
 
-import com.example.imagemPecas.domain.entity.Image;
 import lombok.Getter;
 import org.springframework.http.MediaType;
 

@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+/*
+ * Paleta baseada no design (docs/): azul-marinho profundo, superfícies em azul royal
+ * escuro e campos em cinza claro.
+ */
+@theme {
+  --color-navy-950: #061433;
+  --color-navy-900: #091b41;
+  --color-navy-800: #142959;
+  --color-navy-700: #182f62;
+  --color-navy-600: #1d3f88;
+  --color-navy-500: #2a52a8;
+  --color-navy-300: #889ac0;
+  --color-field: #d9d9d9;
+
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-space-mono), ui-monospace, monospace;
+  --font-logo: var(--font-syncopate), var(--font-outfit), sans-serif;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--color-navy-900);
+  color: #ffffff;
+}
+
+/* cartão das telas de login/cadastro */
+@utility auth-card {
+  @apply w-full max-w-sm rounded-3xl bg-navy-800 px-8 py-10 shadow-2xl shadow-black/40 sm:px-12;
+}
+
+/* rótulo em fonte monoespaçada, como no design */
+@utility label-mono {
+  @apply mb-1 block font-mono text-sm text-white;
+}
+
+/* campo cinza claro com texto escuro */
+@utility input-field {
+  @apply w-full rounded-md bg-field px-3 py-2 font-mono text-sm text-navy-900 outline-none transition
+    placeholder:text-slate-500 focus:ring-2 focus:ring-navy-500;
+}
+
+@utility btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-navy-600 px-5 py-2 font-mono text-sm text-white
+    shadow-md shadow-black/30 transition hover:bg-navy-500 disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+/* botões e campos em formato de "pílula" da barra da galeria */
+@utility pill {
+  @apply inline-flex items-center gap-2 rounded-xl border border-white/15 bg-navy-950/60 px-4 py-2 font-mono text-sm
+    text-white transition;
+}
+
+@utility field-error {
+  @apply mt-1 font-mono text-xs text-rose-300;
+}
+
+/* Toasts (react-toastify) na paleta do projeto */
+.Toastify__toast {
+  background: var(--color-navy-700) !important;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  color: #fff !important;
+  border-radius: 14px !important;
+  font-family: var(--font-outfit), sans-serif;
+}
